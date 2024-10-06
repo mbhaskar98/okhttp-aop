@@ -1,5 +1,6 @@
 package com.example.aop_enabled_library
 
+import android.util.Log
 import okhttp3.Authenticator
 import okhttp3.Credentials
 import okhttp3.OkHttpClient
@@ -12,20 +13,17 @@ import java.lang.Exception
 import java.net.InetSocketAddress
 import java.net.Proxy
 
-class AspectLogging {
-}
-
 @Aspect
 class OkHttpProxyAspect {
 
     @Before("call(* okhttp3.OkHttpClient.Builder.build(..))")
     fun interceptOkHttpClientBuild(joinPoint: JoinPoint) {
         try {
-            println("AOP: Called function interceptOkHttpClientBuild")
+            Log.i("aop_enabled_library", "Called function interceptOkHttpClientBuild")
             val builder = joinPoint.target as OkHttpClient.Builder
 
             // Define proxy settings (modify as needed)
-            val proxy = Proxy(Proxy.Type.HTTP, InetSocketAddress("gateway.zscaler.net", 8080))
+            val proxy = Proxy(Proxy.Type.HTTP, InetSocketAddress("127.0.0.1", 8080))
 
             val authenticator = Authenticator { _: Route?, response: Response ->
                 val credential = Credentials.basic("username", "password")
@@ -38,9 +36,9 @@ class OkHttpProxyAspect {
             // Modify the builder to add proxy before building OkHttpClient
             builder.proxy(proxy)
 
-            println("AOP: Proxy added to OkHttpClient.Builder")
+            Log.i("aop_enabled_library", "Proxy added to OkHttpClient.Builder")
         }catch (e : Exception) {
-            println("CRASHHHH is $e")
+            Log.e("aop_enabled_library", "CRASHHHH $e")
         }
 
     }
